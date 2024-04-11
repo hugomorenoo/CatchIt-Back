@@ -22,7 +22,7 @@ public class AtrapaUnMillonApplication {
 				registry.addMapping("/api/**")
 						.allowedOriginPatterns("*")
 						.allowedMethods("GET", "POST", "PUT", "DELETE")
-						.allowCredentials(true);;
+						.allowCredentials(true);
 			}
 		};
 	}
