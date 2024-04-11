@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,4 +36,16 @@ public class Partida {
     @JoinColumn(name = "idAdmin")
     @JsonBackReference
     private Admin admin;
+
+    public Partida(){}
+
+    public Partida(String id, Set<Pregunta> preguntasFiltered, String titulo, int numVidas, int numRondas, Admin admin) {
+        this.id = id;
+        this.preguntas = preguntasFiltered;
+        this.titulo = titulo;
+        this.numRondas = numRondas;
+        this.numVidas = numVidas;
+        this.admin = admin;
+        this.jugadores = new ArrayList<Jugador>();
+    }
 }

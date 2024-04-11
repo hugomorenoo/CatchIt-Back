@@ -11,4 +11,18 @@ public interface PreguntaRepository extends JpaRepository<Pregunta, Long> {
     List<Pregunta> findByAdminId(Long idAdmin);
 
     List<Pregunta> findPartidaByNivelAndDificultadAndAsignatura(String nivel, String dificultad, String asignatura);
+
+    List<Pregunta> findPreguntaByAsignatura(String asignatura);
+
+    List<Pregunta> findPreguntaByNivel(String nivel);
+
+    List<Pregunta> findPreguntaByDificultad(String dificultad);
+
+    List<Pregunta> findPreguntaByDificultadAndAsignatura(String dificultad, String asignatura);
+
+    List<Pregunta> findPreguntaByDificultadAndNivel(String dificultad, String nivel);
+
+    List<Pregunta> findPreguntaByAsignaturaAndNivel(String asignatura, String nivel);
+
+    List<Pregunta> findPreguntaByAsignaturaAndNivelAndDificultad(String asignatura, String nivel, String dificultad);
 }
