@@ -21,4 +21,10 @@ public class Jugador {
     @JoinColumn(name = "id_partida")
     @JsonBackReference
     Partida partida;
+
+    public Jugador(String nickname, Partida partida){
+        this.nombre = nickname;
+        this.puntos = 0;
+        this.partida = partida;
+    }
 }

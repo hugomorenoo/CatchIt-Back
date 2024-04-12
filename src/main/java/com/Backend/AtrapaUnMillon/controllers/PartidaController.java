@@ -2,8 +2,10 @@ package com.Backend.AtrapaUnMillon.controllers;
 
 import com.Backend.AtrapaUnMillon.exceptions.AdminBadRequestException;
 import com.Backend.AtrapaUnMillon.exceptions.PreguntaBadRequestException;
+import com.Backend.AtrapaUnMillon.models.Jugador;
 import com.Backend.AtrapaUnMillon.models.Partida;
 import com.Backend.AtrapaUnMillon.models.Pregunta;
+import com.Backend.AtrapaUnMillon.services.JugadorService;
 import com.Backend.AtrapaUnMillon.services.PartidaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,6 +24,9 @@ public class PartidaController {
 
     @Autowired
     private PartidaService partidaService;
+
+    @Autowired
+    private JugadorService jugadorService;
     @Operation(summary = "Crea una partida", tags = {"partidas"})
     @PostMapping("/create")
     public ResponseEntity<Partida> crearPartida(@RequestParam(required = false) String nivel,
@@ -50,6 +55,27 @@ public class PartidaController {
             return new ResponseEntity<>(partida, HttpStatus.OK);
         }catch (PreguntaBadRequestException exception){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(summary = "Introduce un usuario", tags = {"partidas"})
+    @ApiResponse(responseCode = "200", description = "Partida editada")
+    @ApiResponse(responseCode = "400", description = "Error al editar partida")
+    @Parameter(name = "partidaId", required = true, description = "ID de la partida")
+    @Parameter(name = "nickname", required = true, description = "nick del jugador")
+    @PutMapping("/pregunta/{partidaId}/{nickname}")
+    public ResponseEntity<Partida> updatePartida(@PathVariable String partidaId,
+                                                   @PathVariable String nickname){
+        try{
+            Partida partida = partidaService.getPartida(partidaId);
+            Jugador new_jugador = jugadorService.crearJugador(nickname, partida);
+            List<Jugador> jugadores_partida = partida.getJugadores();
+            jugadores_partida.add(new_jugador);
+            partida.setJugadores(jugadores_partida);
+            partidaService.update(partida);
+            return new ResponseEntity<>(partida, HttpStatus.CREATED);
+        }catch(RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

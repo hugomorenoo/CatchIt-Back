@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -36,6 +37,11 @@ public class Partida {
     @JoinColumn(name = "idAdmin")
     @JsonBackReference
     private Admin admin;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public Partida(){}
 

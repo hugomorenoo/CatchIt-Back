@@ -2,9 +2,11 @@ package com.Backend.AtrapaUnMillon.services;
 
 import com.Backend.AtrapaUnMillon.exceptions.AdminBadRequestException;
 import com.Backend.AtrapaUnMillon.models.Admin;
+import com.Backend.AtrapaUnMillon.models.Jugador;
 import com.Backend.AtrapaUnMillon.models.Partida;
 import com.Backend.AtrapaUnMillon.models.Pregunta;
 import com.Backend.AtrapaUnMillon.repositories.AdminRepository;
+import com.Backend.AtrapaUnMillon.repositories.JugadorRepository;
 import com.Backend.AtrapaUnMillon.repositories.PartidaRepository;
 import com.Backend.AtrapaUnMillon.repositories.PreguntaRepository;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -23,7 +25,6 @@ public class PartidaService {
     private PartidaRepository partidaRepository;
     @Autowired
     private PreguntaRepository preguntarepository;
-
     @Autowired
     private AdminRepository adminRepository;
 
@@ -66,10 +67,20 @@ public class PartidaService {
         if (optionalAdmin.isPresent()) {
             Admin admin = optionalAdmin.get();
             Partida new_partida = new Partida(id, preguntas_partida, titulo, numVidas, numRondas, admin);
-            partidaRepository.save(new_partida);
+            for (Pregunta pregunta : preguntas_partida) {
+                pregunta.getPartidas().add(new_partida); // Agrega la partida a la colección de partidas en cada pregunta
+            }
+
+            new_partida.getPreguntas().addAll(preguntas_partida); // Agrega todas las preguntas seleccionadas a la partida
+
+            partidaRepository.save(new_partida); // Guarda la nueva partida
             return new_partida;
         } else {
             throw new AdminBadRequestException("admin no existente");
         }
+    }
+
+    public void update(Partida partida) {
+        partidaRepository.save(partida);
     }
 }

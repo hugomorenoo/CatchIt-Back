@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -46,6 +47,11 @@ public class Pregunta {
     @ManyToMany(mappedBy = "preguntas")
     @JsonBackReference
     private Set<Partida> partidas;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public Pregunta(String pregunta, String respuestaCorrecta, String respuesta1,
                     String respuesta2, String respuesta3, String nivel,
