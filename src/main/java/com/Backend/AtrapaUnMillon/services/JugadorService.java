@@ -14,7 +14,7 @@ public class JugadorService {
 
     public Jugador crearJugador(String nickname, Partida partida){
         for(Jugador jugador : partida.getJugadores()){
-            if(nickname == jugador.getNombre()){
+            if(nickname.equals(jugador.getNombre())){
                 throw new AdminBadRequestException("Este nickname ya existe");
             }
         }

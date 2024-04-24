@@ -13,10 +13,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class PartidaService {
@@ -60,8 +57,16 @@ public class PartidaService {
             preguntas_filtered = preguntarepository.findPreguntaByAsignaturaAndNivelAndDificultad(asignatura, nivel, dificultad);
         }
         Set<Pregunta> preguntas_partida = new HashSet<>();
-        for (var i = 0; i < preguntas_filtered.size(); i++) {
-            preguntas_partida.add(preguntas_filtered.get(i));
+        System.out.println("Entra al método");
+
+        if(preguntas_filtered.size() < (8 * numRondas)){
+            throw new AdminBadRequestException("No hay suficientes preguntas");
+        }else{
+            Random random = new Random();
+            while (preguntas_partida.size() < (8 * numRondas)) {
+                int numeroAleatorio = random.nextInt(preguntas_filtered.size() + 1);
+                preguntas_partida.add(preguntas_filtered.get(numeroAleatorio));
+            }
         }
         Optional<Admin> optionalAdmin = adminRepository.findById(idAdmin);
         if (optionalAdmin.isPresent()) {

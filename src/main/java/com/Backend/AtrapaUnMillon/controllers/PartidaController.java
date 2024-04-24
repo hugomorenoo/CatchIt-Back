@@ -2,6 +2,7 @@ package com.Backend.AtrapaUnMillon.controllers;
 
 import com.Backend.AtrapaUnMillon.exceptions.AdminBadRequestException;
 import com.Backend.AtrapaUnMillon.exceptions.PreguntaBadRequestException;
+import com.Backend.AtrapaUnMillon.exceptions.ResponseWrapper;
 import com.Backend.AtrapaUnMillon.models.Jugador;
 import com.Backend.AtrapaUnMillon.models.Partida;
 import com.Backend.AtrapaUnMillon.models.Pregunta;
@@ -64,18 +65,25 @@ public class PartidaController {
     @Parameter(name = "partidaId", required = true, description = "ID de la partida")
     @Parameter(name = "nickname", required = true, description = "nick del jugador")
     @PutMapping("/pregunta/{partidaId}/{nickname}")
-    public ResponseEntity<Partida> updatePartida(@PathVariable String partidaId,
-                                                   @PathVariable String nickname){
-        try{
+    public ResponseEntity<ResponseWrapper<Partida>> updatePartida(@PathVariable String partidaId,
+                                                                  @PathVariable String nickname) {
+        ResponseWrapper<Partida> response = new ResponseWrapper<>();
+
+        try {
             Partida partida = partidaService.getPartida(partidaId);
             Jugador new_jugador = jugadorService.crearJugador(nickname, partida);
             List<Jugador> jugadores_partida = partida.getJugadores();
             jugadores_partida.add(new_jugador);
             partida.setJugadores(jugadores_partida);
             partidaService.update(partida);
-            return new ResponseEntity<>(partida, HttpStatus.CREATED);
-        }catch(RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            response.setData(partida);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (AdminBadRequestException e) {
+            response.setErrorMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+
+
 }
