@@ -57,18 +57,17 @@ public class PartidaService {
             preguntas_filtered = preguntarepository.findPreguntaByAsignaturaAndNivelAndDificultad(asignatura, nivel, dificultad);
         }
         Set<Pregunta> preguntas_partida = new HashSet<>();
-        System.out.println("Entra al método");
 
         if(preguntas_filtered.size() < (8 * numRondas)){
             throw new AdminBadRequestException("No hay suficientes preguntas");
         }else{
             Random random = new Random();
-            while (preguntas_partida.size() < (8 * numRondas)) {
-                int numeroAleatorio = random.nextInt(preguntas_filtered.size() + 1);
+            do{
+                int numeroAleatorio = random.nextInt(preguntas_filtered.size());
                 preguntas_partida.add(preguntas_filtered.get(numeroAleatorio));
-            }
+            }while (preguntas_partida.size() < (8 * numRondas));
         }
-        Optional<Admin> optionalAdmin = adminRepository.findById(idAdmin);
+      ;  Optional<Admin> optionalAdmin = adminRepository.findById(idAdmin);
         if (optionalAdmin.isPresent()) {
             Admin admin = optionalAdmin.get();
             Partida new_partida = new Partida(id, preguntas_partida, titulo, numVidas, numRondas, admin);
