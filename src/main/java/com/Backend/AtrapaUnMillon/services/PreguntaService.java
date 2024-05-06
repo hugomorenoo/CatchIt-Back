@@ -8,7 +8,12 @@ import com.Backend.AtrapaUnMillon.repositories.AdminRepository;
 import com.Backend.AtrapaUnMillon.repositories.PreguntaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +57,41 @@ public class PreguntaService {
             return new_pregunta;
         }else{
             throw new AdminBadRequestException("No existe admin");
+        }
+    }
+
+    public List<Pregunta> procesarAsignarPreguntas(MultipartFile file, Long idAdmin) throws IOException {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            List<Pregunta> nuevas_preguntas = new ArrayList<>();
+            Optional<Admin> adminOptional = adminRepository.findById(idAdmin);
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                Pregunta new_pregunta = new Pregunta();
+                if (adminOptional.isPresent()) {
+                    Admin admin = adminOptional.get();
+                    new_pregunta.setAdmin(admin);
+
+                    new_pregunta.setAsignatura(data[1]);
+                    new_pregunta.setDificultad(data[2]);
+                    new_pregunta.setNivel(data[3]);
+                    new_pregunta.setPregunta(data[4]);
+                    new_pregunta.setRespuestaCorrecta(data[5]);
+                    new_pregunta.setRespuesta1(data[6]);
+                    new_pregunta.setRespuesta2(data[7]);
+                    new_pregunta.setRespuesta3(data[8]);
+                    new_pregunta.setTiempo(Integer.parseInt(data[9]));
+
+
+                    preguntaRepository.save(new_pregunta);
+                    nuevas_preguntas.add(new_pregunta);
+                } else {
+                    throw new AdminBadRequestException("No se encontró un administrador con el ID especificado");
+                }
+            }
+            return nuevas_preguntas;
+        } catch (IOException e) {
+            throw new IOException("Error al procesar el archivo CSV: " + e.getMessage());
         }
     }
 

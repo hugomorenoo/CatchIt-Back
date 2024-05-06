@@ -12,7 +12,6 @@ import com.Backend.AtrapaUnMillon.repositories.PreguntaRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -67,7 +66,7 @@ public class PartidaService {
                 preguntas_partida.add(preguntas_filtered.get(numeroAleatorio));
             }while (preguntas_partida.size() < (8 * numRondas));
         }
-      ;  Optional<Admin> optionalAdmin = adminRepository.findById(idAdmin);
+        Optional<Admin> optionalAdmin = adminRepository.findById(idAdmin);
         if (optionalAdmin.isPresent()) {
             Admin admin = optionalAdmin.get();
             Partida new_partida = new Partida(id, preguntas_partida, titulo, numVidas, numRondas, admin);

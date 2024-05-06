@@ -12,9 +12,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,6 +76,21 @@ public class PreguntaController {
             Pregunta nueva_pregunta = preguntaService.createPregunta(pregunta, respuestaCorrecta, respuesta1,
                     respuesta2, respuesta3, nivel,
                     dificultad, asignatura, tiempo, null, idAdmin);
+            return new ResponseEntity<>(nueva_pregunta, HttpStatus.CREATED);
+        }catch(AdminBadRequestException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Operation(summary = "Crea una pregunta", tags = {"preguntas"})
+    @ApiResponse(responseCode = "201", description = "Pregunta creada")
+    @ApiResponse(responseCode = "400", description = "Error al crear pregunta")
+    @PostMapping(value = "/preguntacsv", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<List<Pregunta>> createPreguntaCsv(
+            @RequestParam Long idAdmin,
+            @RequestParam (name="archivo") MultipartFile file) throws IOException {
+        try{
+            List<Pregunta> nueva_pregunta = preguntaService.procesarAsignarPreguntas(file, idAdmin);
             return new ResponseEntity<>(nueva_pregunta, HttpStatus.CREATED);
         }catch(AdminBadRequestException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
