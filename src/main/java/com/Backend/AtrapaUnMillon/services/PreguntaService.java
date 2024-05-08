@@ -74,15 +74,15 @@ public class PreguntaService {
                         Admin admin = adminOptional.get();
                         new_pregunta.setAdmin(admin);
 
-                        new_pregunta.setAsignatura(data[1]);
-                        new_pregunta.setDificultad(data[2]);
-                        new_pregunta.setNivel(data[3]);
-                        new_pregunta.setPregunta(data[4]);
-                        new_pregunta.setRespuestaCorrecta(data[5]);
-                        new_pregunta.setRespuesta1(data[6]);
-                        new_pregunta.setRespuesta2(data[7]);
-                        new_pregunta.setRespuesta3(data[8]);
-                        new_pregunta.setTiempo(Integer.parseInt(data[9]));
+                        new_pregunta.setAsignatura(data[0]);
+                        new_pregunta.setDificultad(data[1]);
+                        new_pregunta.setNivel(data[2]);
+                        new_pregunta.setPregunta(data[3]);
+                        new_pregunta.setRespuestaCorrecta(data[4]);
+                        new_pregunta.setRespuesta1(data[5]);
+                        new_pregunta.setRespuesta2(data[6]);
+                        new_pregunta.setRespuesta3(data[7]);
+                        new_pregunta.setTiempo(Integer.parseInt(data[8]));
 
                         preguntaRepository.save(new_pregunta);
                         nuevas_preguntas.add(new_pregunta);
