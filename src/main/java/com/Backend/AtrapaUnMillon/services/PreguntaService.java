@@ -65,29 +65,32 @@ public class PreguntaService {
             String line;
             List<Pregunta> nuevas_preguntas = new ArrayList<>();
             Optional<Admin> adminOptional = adminRepository.findById(idAdmin);
+            int lineCount = 0;
             while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                Pregunta new_pregunta = new Pregunta();
-                if (adminOptional.isPresent()) {
-                    Admin admin = adminOptional.get();
-                    new_pregunta.setAdmin(admin);
+                if (lineCount > 0) { // Saltar la primera línea
+                    String[] data = line.split(",");
+                    Pregunta new_pregunta = new Pregunta();
+                    if (adminOptional.isPresent()) {
+                        Admin admin = adminOptional.get();
+                        new_pregunta.setAdmin(admin);
 
-                    new_pregunta.setAsignatura(data[1]);
-                    new_pregunta.setDificultad(data[2]);
-                    new_pregunta.setNivel(data[3]);
-                    new_pregunta.setPregunta(data[4]);
-                    new_pregunta.setRespuestaCorrecta(data[5]);
-                    new_pregunta.setRespuesta1(data[6]);
-                    new_pregunta.setRespuesta2(data[7]);
-                    new_pregunta.setRespuesta3(data[8]);
-                    new_pregunta.setTiempo(Integer.parseInt(data[9]));
+                        new_pregunta.setAsignatura(data[1]);
+                        new_pregunta.setDificultad(data[2]);
+                        new_pregunta.setNivel(data[3]);
+                        new_pregunta.setPregunta(data[4]);
+                        new_pregunta.setRespuestaCorrecta(data[5]);
+                        new_pregunta.setRespuesta1(data[6]);
+                        new_pregunta.setRespuesta2(data[7]);
+                        new_pregunta.setRespuesta3(data[8]);
+                        new_pregunta.setTiempo(Integer.parseInt(data[9]));
 
-
-                    preguntaRepository.save(new_pregunta);
-                    nuevas_preguntas.add(new_pregunta);
-                } else {
-                    throw new AdminBadRequestException("No se encontró un administrador con el ID especificado");
+                        preguntaRepository.save(new_pregunta);
+                        nuevas_preguntas.add(new_pregunta);
+                    } else {
+                        throw new AdminBadRequestException("No se encontró un administrador con el ID especificado");
+                    }
                 }
+                lineCount++;
             }
             return nuevas_preguntas;
         } catch (IOException e) {

@@ -85,9 +85,9 @@ public class PreguntaController {
     @Operation(summary = "Crea una pregunta", tags = {"preguntas"})
     @ApiResponse(responseCode = "201", description = "Pregunta creada")
     @ApiResponse(responseCode = "400", description = "Error al crear pregunta")
-    @PostMapping(value = "/preguntacsv", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/preguntacsv/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<List<Pregunta>> createPreguntaCsv(
-            @RequestParam Long idAdmin,
+            @PathVariable Long idAdmin,
             @RequestParam (name="archivo") MultipartFile file) throws IOException {
         try{
             List<Pregunta> nueva_pregunta = preguntaService.procesarAsignarPreguntas(file, idAdmin);
