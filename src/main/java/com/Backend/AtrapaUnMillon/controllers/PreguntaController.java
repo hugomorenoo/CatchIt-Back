@@ -88,11 +88,13 @@ public class PreguntaController {
     @PostMapping(value = "/preguntacsv/{idAdmin}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<List<Pregunta>> createPreguntaCsv(
             @PathVariable Long idAdmin,
-            @RequestParam (name="archivo") MultipartFile file) throws IOException {
+            @RequestParam (name="archivo") MultipartFile file){
         try{
             List<Pregunta> nueva_pregunta = preguntaService.procesarAsignarPreguntas(file, idAdmin);
             return new ResponseEntity<>(nueva_pregunta, HttpStatus.CREATED);
-        }catch(AdminBadRequestException e) {
+        }catch(IOException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (AdminBadRequestException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

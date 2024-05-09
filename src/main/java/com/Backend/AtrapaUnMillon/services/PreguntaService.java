@@ -61,6 +61,11 @@ public class PreguntaService {
     }
 
     public List<Pregunta> procesarAsignarPreguntas(MultipartFile file, Long idAdmin) throws IOException {
+        String nombreArchivo = file.getOriginalFilename();
+        String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf("."));
+        if(extension != ".csv"){
+            throw new IOException("Extensión de archivo no permitida");
+        }
         try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
             List<Pregunta> nuevas_preguntas = new ArrayList<>();
