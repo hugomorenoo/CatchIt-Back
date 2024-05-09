@@ -86,4 +86,19 @@ public class PartidaService {
     public void update(Partida partida) {
         partidaRepository.save(partida);
     }
+
+    public void delete(String id, Long idAdmin) {
+        Partida partida = getPartida(id);
+        Optional<Admin> existing_admin = adminRepository.findById(idAdmin);
+        if(existing_admin.isPresent()){
+            Admin admin = existing_admin.get();
+            if(admin.equals(partida.getAdmin())){
+                partidaRepository.delete(partida);
+            }else{
+                throw new AdminBadRequestException("La partida no pertenece a este admin");
+            }
+        }else{
+            throw new AdminBadRequestException("Admin no existente");
+        }
+    }
 }

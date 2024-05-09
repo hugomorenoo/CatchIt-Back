@@ -48,13 +48,13 @@ public class PartidaController {
     @Operation(summary = "Obtiene una partida por id", tags = {"partidas"})
     @ApiResponse(responseCode = "200", description = "Pregunta")
     @ApiResponse(responseCode = "404", description = "No hay preguntas")
-    @Parameter(name = "id", required = true, description = "ID de la pregunta", example = "1")
+    @Parameter(name = "id", required = true, description = "ID de la partida", example = "ABC123")
     @GetMapping("/partida/{id}")
     public ResponseEntity<Partida> getPartida(@PathVariable String id){
         try{
             Partida partida = partidaService.getPartida(id);
             return new ResponseEntity<>(partida, HttpStatus.OK);
-        }catch (PreguntaBadRequestException exception){
+        }catch (AdminBadRequestException exception){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -85,5 +85,19 @@ public class PartidaController {
         }
     }
 
+    @Operation(summary = "Borra una partida por id", tags = {"partidas"})
+    @ApiResponse(responseCode = "200", description = "Partida borrada")
+    @ApiResponse(responseCode = "404", description = "No existe partida o admin incorrecto")
+    @Parameter(name = "id", required = true, description = "ID de la partida", example = "ABCD123")
+    @Parameter(name = "idAdmin", required = true, description = "ID del admin", example = "1")
+    @DeleteMapping("/partida/{id}/{idAdmin}")
+    public ResponseEntity<Partida> deletePartida(@PathVariable String id, @PathVariable Long idAdmin){
+        try{
+            partidaService.delete(id, idAdmin);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (AdminBadRequestException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 }
