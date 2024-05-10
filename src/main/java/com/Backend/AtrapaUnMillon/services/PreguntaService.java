@@ -6,6 +6,7 @@ import com.Backend.AtrapaUnMillon.models.Admin;
 import com.Backend.AtrapaUnMillon.models.Pregunta;
 import com.Backend.AtrapaUnMillon.repositories.AdminRepository;
 import com.Backend.AtrapaUnMillon.repositories.PreguntaRepository;
+import com.Backend.AtrapaUnMillon.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,12 +48,13 @@ public class PreguntaService {
     public Pregunta createPregunta(String pregunta, String respuestaCorrecta, String respuesta1,
                                String respuesta2, String respuesta3, String nivel,
                                String dificultad, String asignatura, int tiempo,
-                               byte[] imagen, Long idAdmin){
+                               MultipartFile imagen, Long idAdmin) throws IOException {
         Optional<Admin> optionalAdmin = adminRepository.findById(idAdmin);
         if(optionalAdmin.isPresent()){
             Admin admin = optionalAdmin.get();
+            byte[] bytesImg = ImageUtils.compressImage(imagen.getBytes());
             Pregunta new_pregunta = new Pregunta(pregunta, respuestaCorrecta, respuesta1, respuesta2,
-                    respuesta3, nivel, dificultad, asignatura, tiempo, imagen, admin);
+                    respuesta3, nivel, dificultad, asignatura, tiempo, bytesImg, admin);
             preguntaRepository.save(new_pregunta);
             return new_pregunta;
         }else{
@@ -127,6 +129,15 @@ public class PreguntaService {
             }
         }else{
             throw new AdminBadRequestException("No existe admin");
+        }
+    }
+
+    public byte[] descargarFoto(Long id) {
+        Pregunta existing_pregunta = preguntaRepository.findById(id).orElse(null);
+        if (existing_pregunta != null){
+            return ImageUtils.decompressImage(existing_pregunta.getImagen());
+        }else{
+            return null;
         }
     }
 }

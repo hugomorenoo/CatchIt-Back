@@ -49,6 +49,21 @@ public class PreguntaController {
         }
     }
 
+    @Operation(summary = "Muestra foto", description = "Obtiene foto de pregunta dado el id", tags = {"preguntas"})
+    @Parameter(name = "id", description = "ID de la pregunta", required = true, example = "8")
+    @ApiResponse(responseCode = "200", description = "Foto de la pregunta")
+    @ApiResponse(responseCode = "404", description = "Pregunta no encontrada")
+    @GetMapping(value = "/pregunta/{id}/foto", produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public ResponseEntity<byte[]> descargarFoto(@PathVariable Long id) {
+        byte[] foto = preguntaService.descargarFoto(id);
+        if ( foto != null ) {
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(foto);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @Operation(summary = "Obtiene una pregunta por id de admin", tags = {"preguntas"})
     @ApiResponse(responseCode = "200", description = "Pregunta")
     @ApiResponse(responseCode = "404", description = "No hay preguntas")
@@ -61,7 +76,7 @@ public class PreguntaController {
     @Operation(summary = "Crea una pregunta", tags = {"preguntas"})
     @ApiResponse(responseCode = "201", description = "Pregunta creada")
     @ApiResponse(responseCode = "400", description = "Error al crear pregunta")
-    @PostMapping("/pregunta")
+    @PostMapping(value = "/pregunta", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Pregunta> createPregunta(@RequestParam String pregunta,
                                                    @RequestParam String respuestaCorrecta,
                                                    @RequestParam String respuesta1,
@@ -71,11 +86,12 @@ public class PreguntaController {
                                                    @RequestParam String dificultad,
                                                    @RequestParam String asignatura,
                                                    @RequestParam int tiempo,
-                                                   @RequestParam Long idAdmin){
+                                                   @RequestParam Long idAdmin,
+                                                   @RequestPart (name="imagen", required=false)MultipartFile imagen) throws IOException{
         try{
             Pregunta nueva_pregunta = preguntaService.createPregunta(pregunta, respuestaCorrecta, respuesta1,
                     respuesta2, respuesta3, nivel,
-                    dificultad, asignatura, tiempo, null, idAdmin);
+                    dificultad, asignatura, tiempo, imagen, idAdmin);
             return new ResponseEntity<>(nueva_pregunta, HttpStatus.CREATED);
         }catch(AdminBadRequestException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -38,7 +38,7 @@ public class Pregunta {
     private String asignatura;
     @Column(name = "tiempo")
     private int tiempo;
-    @Column(name = "imagenPregunta")
+    @Column(name = "imagenPregunta", columnDefinition="longblob", nullable=true)
     private byte[] imagen;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idAdmin")
