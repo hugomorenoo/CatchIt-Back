@@ -115,10 +115,16 @@ public class PreguntaService {
 
     public Pregunta editPregunta(Pregunta existingPregunta, String pregunta, String respuestaCorrecta,
                                  String respuesta1, String respuesta2, String respuesta3, String nivel,
-                                 String dificultad, String asignatura, int tiempo, byte[] imagen, Long idAdmin) {
+                                 String dificultad, String asignatura, int tiempo, MultipartFile imagen, Long idAdmin) throws IOException {
         Optional<Admin> optionalAdmin = adminRepository.findById(idAdmin);
         if(optionalAdmin.isPresent()){
             Admin admin = optionalAdmin.get();
+            byte[] bytesImg;
+            if(imagen != null){
+                bytesImg = ImageUtils.compressImage(imagen.getBytes());
+            }else {
+                bytesImg = null;
+            }
             if(admin == existingPregunta.getAdmin()){
                 existingPregunta.setPregunta(pregunta);
                 existingPregunta.setRespuestaCorrecta(respuestaCorrecta);
@@ -129,7 +135,7 @@ public class PreguntaService {
                 existingPregunta.setDificultad(dificultad);
                 existingPregunta.setAsignatura(asignatura);
                 existingPregunta.setTiempo(tiempo);
-                existingPregunta.setImagen(imagen);
+                existingPregunta.setImagen(bytesImg);
                 preguntaRepository.save(existingPregunta);
                 return existingPregunta;
             }else{

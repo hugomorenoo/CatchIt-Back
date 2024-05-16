@@ -125,8 +125,7 @@ public class PreguntaController {
     @Operation(summary = "Edita una pregunta", tags = {"preguntas"})
     @ApiResponse(responseCode = "200", description = "Pregunta editada")
     @ApiResponse(responseCode = "400", description = "Error al editar pregunta")
-    @Parameter(name = "id", required = true, description = "ID de la pregunta", example = "1")
-    @PutMapping("/pregunta/{preguntaId}")
+    @PutMapping(value = "/pregunta/{preguntaId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Pregunta> updatePregunta(@PathVariable Long preguntaId,
                                                     @RequestParam String pregunta,
                                                    @RequestParam String respuestaCorrecta,
@@ -137,13 +136,18 @@ public class PreguntaController {
                                                    @RequestParam String dificultad,
                                                    @RequestParam String asignatura,
                                                    @RequestParam int tiempo,
-                                                    @RequestParam Long idAdmin){
+                                                   @RequestParam Long idAdmin,
+                                                   @RequestPart (name="imagen", required=false)MultipartFile imagen) throws IOException{
         try{
             Pregunta existingPregunta = preguntaService.getPreguntaById(preguntaId);
-            Pregunta edited_pregunta =  preguntaService.editPregunta(existingPregunta, pregunta, respuestaCorrecta, respuesta1,
-                    respuesta2, respuesta3, nivel,
-                    dificultad, asignatura, tiempo, null, idAdmin);
-           return new ResponseEntity<>(edited_pregunta, HttpStatus.CREATED);
+            try{
+                Pregunta edited_pregunta =  preguntaService.editPregunta(existingPregunta, pregunta, respuestaCorrecta, respuesta1,
+                        respuesta2, respuesta3, nivel,
+                        dificultad, asignatura, tiempo, imagen, idAdmin);
+                return new ResponseEntity<>(edited_pregunta, HttpStatus.CREATED);
+            }catch(IOException e){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
         }catch(RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
