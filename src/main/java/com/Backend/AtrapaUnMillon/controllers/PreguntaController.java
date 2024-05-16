@@ -3,7 +3,9 @@ package com.Backend.AtrapaUnMillon.controllers;
 
 import com.Backend.AtrapaUnMillon.exceptions.AdminBadRequestException;
 import com.Backend.AtrapaUnMillon.exceptions.PreguntaBadRequestException;
+import com.Backend.AtrapaUnMillon.exceptions.ResponseWrapper;
 import com.Backend.AtrapaUnMillon.models.Admin;
+import com.Backend.AtrapaUnMillon.models.Partida;
 import com.Backend.AtrapaUnMillon.models.Pregunta;
 import com.Backend.AtrapaUnMillon.services.AdminService;
 import com.Backend.AtrapaUnMillon.services.PreguntaService;
@@ -102,16 +104,21 @@ public class PreguntaController {
     @ApiResponse(responseCode = "201", description = "Pregunta creada")
     @ApiResponse(responseCode = "400", description = "Error al crear pregunta")
     @PostMapping(value = "/preguntacsv/{idAdmin}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<List<Pregunta>> createPreguntaCsv(
+    public ResponseEntity<ResponseWrapper<List<Pregunta>>> createPreguntaCsv(
             @PathVariable Long idAdmin,
             @RequestParam (name="archivo") MultipartFile file){
+        ResponseWrapper<List<Pregunta>> response = new ResponseWrapper<>();
+
         try{
             List<Pregunta> nueva_pregunta = preguntaService.procesarAsignarPreguntas(file, idAdmin);
-            return new ResponseEntity<>(nueva_pregunta, HttpStatus.CREATED);
+            response.setData(nueva_pregunta);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         }catch(IOException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            response.setErrorMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         } catch (AdminBadRequestException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            response.setErrorMessage(e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 

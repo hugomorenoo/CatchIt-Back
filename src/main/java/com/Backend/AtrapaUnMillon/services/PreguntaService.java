@@ -65,7 +65,7 @@ public class PreguntaService {
     public List<Pregunta> procesarAsignarPreguntas(MultipartFile file, Long idAdmin) throws IOException {
         String nombreArchivo = file.getOriginalFilename();
         String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf("."));
-        if(extension != ".csv"){
+        if(!extension.equals(".csv")){
             throw new IOException("Extensión de archivo no permitida");
         }
         try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
@@ -76,6 +76,9 @@ public class PreguntaService {
             while ((line = br.readLine()) != null) {
                 if (lineCount > 0) { // Saltar la primera línea
                     String[] data = line.split(",");
+                    if(data.length < 9){
+                        throw new IOException("Datos incompletos en la línea " + lineCount);
+                    }
                     Pregunta new_pregunta = new Pregunta();
                     if (adminOptional.isPresent()) {
                         Admin admin = adminOptional.get();
