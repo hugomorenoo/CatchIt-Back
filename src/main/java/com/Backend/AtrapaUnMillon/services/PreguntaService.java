@@ -52,7 +52,12 @@ public class PreguntaService {
         Optional<Admin> optionalAdmin = adminRepository.findById(idAdmin);
         if(optionalAdmin.isPresent()){
             Admin admin = optionalAdmin.get();
-            byte[] bytesImg = ImageUtils.compressImage(imagen.getBytes());
+            byte[] bytesImg;
+            if(imagen != null){
+                bytesImg = ImageUtils.compressImage(imagen.getBytes());
+            }else {
+                bytesImg = null;
+            }
             Pregunta new_pregunta = new Pregunta(pregunta, respuestaCorrecta, respuesta1, respuesta2,
                     respuesta3, nivel, dificultad, asignatura, tiempo, bytesImg, admin);
             preguntaRepository.save(new_pregunta);
