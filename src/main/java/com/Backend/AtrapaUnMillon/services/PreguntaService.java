@@ -80,7 +80,11 @@ public class PreguntaService {
             int lineCount = 0;
             while ((line = br.readLine()) != null) {
                 if (lineCount > 0) { // Saltar la primera línea
-                    String[] data = line.split(",");
+                    String[] data = line.split("[,;]");
+                    for(int i = 0; i < data.length; i++){
+                        System.out.println(data[i]);
+                    }
+                    System.out.println(data.length);
                     if(data.length < 9){
                         throw new IOException("Datos incompletos en la línea " + lineCount);
                     }

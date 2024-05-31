@@ -21,17 +21,4 @@ public class AtrapaUnMillonApplication extends SpringBootServletInitializer {
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(AtrapaUnMillonApplication.class);
 	}
-
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/**")
-						.allowedOriginPatterns("*")
-						.allowedMethods("GET", "POST", "PUT", "DELETE")
-						.allowCredentials(true);
-			}
-		};
-	}
 }
